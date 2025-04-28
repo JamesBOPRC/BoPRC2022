@@ -1,7 +1,7 @@
 Package: BoPRC2022
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
+Title: Useful functions for BoPRC staff.
+Version: 0.2.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
