@@ -1,9 +1,9 @@
-Package: BoPRC2022
+Package: BoPRC2025
 Type: Package
 Title: Useful functions for BoPRC staff.
 Version: 0.2.0
 Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Maintainer: James Dare <james.dare@boprc.govt.nz>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
