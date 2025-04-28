@@ -1479,156 +1479,109 @@ SFRG_Table <- function (data, start = "", end = "",err_mtd="max",output){
 ##################################################################################
 
 
-TidalFromDate<-function(date=""){
-  #TaurangaTides<-read.csv("Book1.csv")
-  names(TaurangaTides)=c("Date","Height","TideHeight")
-  TaurangaTides$Date<-as.POSIXlt(TaurangaTides$Date)
-  date<-as.POSIXlt(date)
+TidalFromDate <- function (date,SecondaryPort = "none")
+{
 
-  #creating a dataframe to store results, with each date as a row
-  tidalsummary<- data.frame(Time=date)
-
-  #repeat the following for each row (date) in tidalsummary
-  for (i in 1:nrow(tidalsummary)){
-
-    #find the time differences between the inputted date, and all of the dates in the TaurangaTides dataframe
-    # in seconds. Take the absolute value of the time differences, assign the smallest of the values to 'seconds'
-    hamish<-min(as.numeric(abs(difftime(TaurangaTides$Date,(as.POSIXlt(date[i])),units="secs") )))
-
-    #take the inputted date and minus 'seconds'
-    closestdatedown <-as.POSIXlt((as.POSIXlt(date[i])-hamish))
-
-    #take the inputted date and plus 'seconds'
-    closestdateup <-as.POSIXlt((as.POSIXlt(date[i])+hamish))
-
-    #if closestdateup is in the tauranga tides dataframe , do the following
-    if((closestdateup[i]) %in% (TaurangaTides$Date)){
-      #assign x to closest date up
-      x<- closestdateup[i]
-
-      #take the taurangatides df, and find the tideheight (H or L) corresponding to x,
-      #assign this to j
-      j<-TaurangaTides %>% filter(Date==x) %>% select(TideHeight)
+  library(lubridate)
+  library(tidyverse)
 
 
-      #b is the tauranga tides row of closest date up AND the row before it
-      b<-TaurangaTides[which(TaurangaTides$Date==(closestdateup[i]))+c(-1:0),]
+  if(SecondaryPort == "Bowentown"){
+    TideData <- readRDS("Tide_Datasets/Bowentown.Rds")
+  }else if(SecondaryPort == "Kauri Point"){
+    TideData <- readRDS("Tide_Datasets/KauriPoint.Rds")
+  }else if(SecondaryPort == "Maketu"){
+    TideData <- readRDS("Tide_Datasets/Maketu.Rds")
+  }else if(SecondaryPort == "Ohope"){
+    TideData <- readRDS("Tide_Datasets/Ohope.Rds")
+  }else if(SecondaryPort == "Omokoroa"){
+    TideData <- readRDS("Tide_Datasets/Omokoroa.Rds")
+  }else if(SecondaryPort == "Opotiki"){
+    TideData <- readRDS("Tide_Datasets/Opotiki.Rds")
+  }else if(SecondaryPort == "Rangitaiki"){
+    TideData <- readRDS("Tide_Datasets/Rangitaiki.Rds")
+  }else if(SecondaryPort == "Town Wharf"){
+    TideData <- readRDS("Tide_Datasets/TownWharf.Rds")
+  }else if(SecondaryPort == "Whakatane"){
+    TideData <- readRDS("Tide_Datasets/Whakatane.Rds")
+  }else{
+    TideData <- readRDS("Tide_Datasets/Tauranga.Rds")
+  }
 
-      #hh is the height of the tide before the closest date up tide
-      hh<-b[1,2]
+  names(TideData) = c("Date", "Height", "TideHeight")
+  TideData$Date <- as.POSIXlt(TideData$Date,tz="etc/GMT+12")
 
-      #jj is the height of the tide of closest date up
-      jj<-b[2,2]
+  date <- as.POSIXlt(date,tz="etc/GMT+12")
+  tidalsummary <- data.frame(Time = date)
 
-      #the time difference in hours between interest date, and the tide BEFORE closesdate up
-      first<-as.numeric(difftime(date[i],(as.POSIXlt(b[1,1])), unit="hours"))
-
-      #the time difference in hours between closest date up and the tide before it
-      secondd<-as.numeric(difftime((as.POSIXlt(b[2,1])),(as.POSIXlt(b[1,1])), unit="hours"))
-
-      #getting the phase angle
-      phase<-((first)/(secondd)*pi)
-
-      #changing the range from -1 to 1, to 0 to 1
-      prop<-((cos(phase)+1)/2)
-
-      #rounding to 3 decimal places
-      propo<-format(round(prop,3),nsmall=3)
-
-      #calculating water level
-      tidelevel<-prop*(hh-jj)+jj
-
-      #rounding to 3 decimal places
-      tidelevell<-format(round(tidelevel,3),nsmall=3)
-
-      #assigning results to the tidal summary dataframe
-      tidalsummary$EstimatedWaterLevel[i]<-tidelevell
-      tidalsummary$NextTide[i]<-j
-
-      #changing the proportion output so it can be interpretted as 0 = low 1= high
-      if(j=="H"){
-        tidalsummary$Proportion[i]<-(1-as.numeric(propo))
+  for (i in 1:nrow(tidalsummary)) {
+    hamish <- min(as.numeric(abs(difftime(TideData$Date,
+                                          (as.POSIXlt(date[i])), units = "secs"))))
+    closestdatedown <- as.POSIXlt((as.POSIXlt(date[i]) -
+                                     hamish))
+    closestdatedown <- as.POSIXlt(closestdatedown)
+    closestdatedown <- as.character(closestdatedown)
+    closestdateup <- as.POSIXlt((as.POSIXlt(date[i]) + hamish))
+    closestdateup <- as.POSIXlt(closestdateup)
+    closestdateup <- as.character(closestdateup)
+    TideData$Date <- as.character(TideData$Date)
+    if ((closestdateup[i]) %in% (TideData$Date)) {
+      x <- closestdateup[i]
+      j <- TideData %>% filter(Date == x) %>% select(TideHeight)
+      b <- TideData[which(TideData$Date == (closestdateup[i])) +
+                      c(-1:0), ]
+      hh <- b[1, 2]
+      jj <- b[2, 2]
+      first <- as.numeric(difftime(date[i], (as.POSIXlt(b[1,
+                                                          1])), unit = "hours"))
+      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1])),
+                                     (as.POSIXlt(b[1, 1])), unit = "hours"))
+      phase <- ((first)/(secondd) * pi)
+      prop <- ((cos(phase) + 1)/2)
+      propo <- format(round(prop, 3), nsmall = 3)
+      tidelevel <- prop * (hh - jj) + jj
+      tidelevell <- format(round(tidelevel, 3), nsmall = 3)
+      tidalsummary$EstimatedWaterLevel[i] <- tidelevell
+      tidalsummary$NextTide[i] <- j
+      if (j == "H") {
+        tidalsummary$Proportion[i] <- (1 - as.numeric(propo))
       }
-
-      if(j=="L"){
-        tidalsummary$Proportion[i]<-propo
+      if (j == "L") {
+        tidalsummary$Proportion[i] <- propo
       }
     }
-
-    #if closestdatedown is in the tauranga tides dataframe, do the following
-    if((closestdatedown[i]) %in% (TaurangaTides$Date)){
-      #assign x to closest date down
-      x<- closestdatedown[i]
-
-      #take the taurangatides df and find the tideheight (H or L) corresponding to x
-      #assign this to j
-      #j<-TaurangaTides %>% filter(Date==x) %>% select(TideHeight)
-
-      #b is the tauranga tides row of closest date down AND the row after it
-      b<-TaurangaTides[which(TaurangaTides$Date==(closestdatedown[i]))+c(0:1),]
-
-      #hh is the height of the tide of closestdatedown
-      hh<-b[1,2]
-
-      #jj is the height of the tide after closestdatedown
-      jj<-b[2,2]
-
-      j<-b[2,3]
-
-      #the time difference in hours between interest date and closestdatedown
-      first<-as.numeric(difftime(date[i],(as.POSIXlt(b[1,1])), unit="hours"))
-
-      #the time difference in hours between closestdatedown and the tide after it
-      secondd<-as.numeric(difftime((as.POSIXlt(b[2,1])),(as.POSIXlt(b[1,1])), unit="hours"))
-
-      #calculating the phase angle
-      phase<-((first)/(secondd)*pi)
-
-      #changing the range from -1 to 1, to 0 to 1
-      prop<-((cos(phase)+1)/2)
-
-      #rounding to 3 decimal places
-      propo<-format(round(prop,3),nsmall=3)
-
-      #calculating the water level
-      tidelevel<-prop*(hh-jj)+jj
-
-      #rounding to 3 decimal places
-      tidelevell<-format(round(tidelevel,3),nsmall=3)
-
-      #assigning results to the tidal summary dataframe
-      tidalsummary$EstimatedWaterLevel[i]<-tidelevell
-      tidalsummary$NextTide[i]<-j
-
-      #changing proportion output so it can be interpretted as 0 = low, 1 = high
-      if(j=="H"){
-        tidalsummary$Proportion[i]<-(1-as.numeric(propo))
+    if ((closestdatedown[i]) %in% (TideData$Date)) {
+      x <- closestdatedown[i]
+      b <- TideData[which(TideData$Date == (closestdatedown[i])) +
+                      c(0:1), ]
+      hh <- b[1, 2]
+      jj <- b[2, 2]
+      j <- b[2, 3]
+      first <- as.numeric(difftime(date[i], (as.POSIXlt(b[1,
+                                                          1])), unit = "hours"))
+      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1])),
+                                     (as.POSIXlt(b[1, 1])), unit = "hours"))
+      phase <- ((first)/(secondd) * pi)
+      prop <- ((cos(phase) + 1)/2)
+      propo <- format(round(prop, 3), nsmall = 3)
+      tidelevel <- prop * (hh - jj) + jj
+      tidelevell <- format(round(tidelevel, 3), nsmall = 3)
+      tidalsummary$EstimatedWaterLevel[i] <- tidelevell
+      tidalsummary$NextTide[i] <- j
+      if (j == "H") {
+        tidalsummary$Proportion[i] <- (1 - as.numeric(propo))
       }
-
-      if(j=="L"){
-        tidalsummary$Proportion[i]<-propo
+      if (j == "L") {
+        tidalsummary$Proportion[i] <- propo
       }
     }
-
   }
   return(tidalsummary)
 }
 
-##################################################################################
-
-TidalFromDateDF<- function(data){
-  #take the 3rd coloumn of the data, change to character format and assign to 'dates'
-  dates<-as.character(data[,3])
-
-  #assign results from TidalFromDate of 'dates' to 'tidal'
-  tidal<-TidalFromDate(dates)
-
-  #take the orginal data, and add on coloumns 2,3,4 from 'tidal'
-  cbind(data,tidal[,2:4])
-
-}
 
 ##################################################################################
+
 
 
 

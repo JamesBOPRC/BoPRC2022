@@ -3,7 +3,7 @@
 \title{
 Obtain tidal information from date(s)}
 \description{
-This function will output tidal information from an inputted date. The tidal information provided is 'Next Tide', 'Estimated Water Level' and 'Proportion', these are explained in the value section below. Tidal information is sourced from the LINZ website, and currently (Jan 2022) is only applicable to Tauranga sites from 2012-2024.}
+This function will output tidal information from an inputted date. The tidal information provided is 'Next Tide', 'Estimated Water Level' and 'Proportion', these are explained in the value section below. Tidal information is sourced from the LINZ website for Tauranga.  Secondary ports are calculated via an offset from the Tauranga port. Data is available from January 1 2012- December 31 2024.}
 \usage{
 TidalFromDate(date)
 }
@@ -11,6 +11,23 @@ TidalFromDate(date)
   \item{date}{
 Date(s) to obtain tidal information for, in quotation marks. In "yyyy/mm/dd hh:mm:ss" format.
 }
+\item{SecondaryPort}{
+The most appropriate secondary port to use.  Options include:
+
+* Bowentown
+* Kauri Point
+* Maketu
+* Ohope
+* Omokoroa
+* Opotiki
+* Rangitaiki
+* Town Wharf
+* Whakatane
+
+Tauranga tidal heights will be used if no secondary port is chosen.
+}
+
+
 }
 
 \value{
