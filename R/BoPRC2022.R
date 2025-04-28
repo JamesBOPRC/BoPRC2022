@@ -110,19 +110,6 @@ Percentile_Plot <- function(Percentile){
   }
 }
 
-##################################################################################
-
-update_boprc_package <- function() {
-  latest_packages = list.files("\\\\WHKFAP02\\Projects\\Applications\\Data Services\\Data Services\\Environmental Data Services\\Tools\\DataServices\\R\\Packages")
-  latest_package = latest_packages[grep("BoPRC_",latest_packages)]
-  install.packages(paste("\\\\WHKFAP02\\Projects\\Applications\\Data Services\\Data Services\\Environmental Data Services\\Tools\\DataServices\\R\\Packages\\",latest_package, sep = ""), repos = NULL)
-  .rs.restartR()
-}
-
-##################################################################################
-## ask james. currently this would only give true percentile if the value is in the coloumm. or if there are loads
-# of data points. cummulative dist (not emmpirical) would be better (depending on how its used)
-
 
 # do
 Percentile_Calc <- function(df, colnum, value){
@@ -143,9 +130,9 @@ NOFLakesPhytoplankton <- function(data, time=Sys.time(), start="", end=""){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesPhytoplankton")
   }
 
-  if(!("Chloro a (mg/m^3)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
-  }
+  # if(!("Chloro a (mg/m^3)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
+  # }
 
   as.Date(time)
   #extract the current year
@@ -221,9 +208,9 @@ NOFLakesRiversCyanobacteria<-function(data,time=Sys.Date(), start="", end="") {
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesPhytoplankton")
   }
 
-  if(!(c("Total Cyanobacteria (mm^3/l)","Potentially Toxic Cyanobacteria (mm^3/l)") %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
-  }
+  # if(!(c("Total Cyanobacteria (mm^3/l)","Potentially Toxic Cyanobacteria (mm^3/l)") %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
+  # }
 
   require(lubridate)
   require(dplyr)
@@ -293,9 +280,9 @@ NOFLakesTN <- function(data, laketype="Stratified", time=Sys.Date(), start="", e
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesTN")
   }
 
-  if(!("N (Tot) (g/m^3)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTN")
-  }
+  # if(!("N (Tot) (g/m^3)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTN")
+  # }
 
   if(!(laketype == "Polymictic"|laketype == "polymictic"|laketype == "Stratified"|laketype == "stratified" )){
     stop("Incorrect laketype used. For more information on this error, run: ?NOFLakesTN")
@@ -372,9 +359,9 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesTP")
   }
 
-  if(!("P (Tot) (g/m^3)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTP")
-  }
+  # if(!("P (Tot) (g/m^3)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTP")
+  # }
 
   require(lubridate)
   require(dplyr)
@@ -440,9 +427,9 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
 NOFLakesRiversNH3 <- function (data, start = "", end = ""){
 
 
-  if(!("Ammoniacal N (g/m^3)" %in% names(data))){
-    print("Ammoniacal N parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
-  }
+  # if(!("Ammoniacal N (g/m^3)" %in% names(data))){
+  #   print("Ammoniacal N parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
+  # }
 
   #if(class(adjust)!="logical"){
   # stop("Adjust arguement must be logical. For more information on this error, run: ?NOFLakesRiversNH3")
@@ -452,9 +439,9 @@ NOFLakesRiversNH3 <- function (data, start = "", end = ""){
   require(dplyr)
   if (ncol(data)==5) {
 
-    if(!("pH (pH Units)" %in% names(data))){
-      print("pH parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
-    }
+    # if(!("pH (pH Units)" %in% names(data))){
+    #   print("pH parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
+    # }
 
     names(data) <- c("ID", "Name", "Time", "Value", "pH")
     data$pH <- round(data$pH, 1)
@@ -537,9 +524,9 @@ NOFRiversNO32 <- function (data, time=Sys.Date(), start="", end=""){
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversNO3")
   }
 
-  if(!("Nitrite Nitrate (as N) (g/m^3)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFRiversNO3")
-  }
+  # if(!("Nitrite Nitrate (as N) (g/m^3)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversNO3")
+  # }
 
   as.Date(time)
   #extract the current year
@@ -595,9 +582,9 @@ NOFLakesRiversECOLI <- function (data,time=Sys.Date(), start = "", end = ""){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesRiversECOLI")
   }
 
-  if(!("E coli (cfu/100ml)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFLakesRiversECOLI")
-  }
+  # if(!("E coli (cfu/100ml)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesRiversECOLI")
+  # }
 
   require(dplyr)
   as.Date(time)
@@ -708,9 +695,9 @@ NOFRiversPeriphyton<-function(data, time=Sys.Date(), start="", end="",class="Def
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversPeriphyton")
   }
 
-  if(!("Chloro Periphyton (mg/m^2)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFRiversPeriphyton")
-  }
+  # if(!("Chloro Periphyton (mg/m^2)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversPeriphyton")
+  # }
 
   as.Date(time)
   #extract the current year
@@ -777,9 +764,9 @@ NOFRiversDRP <- function(data, time=Sys.Date(),start="", end=""){
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversDRP")
   }
 
-  if(!("DRP (g/m^3)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFRiversDRP")
-  }
+  # if(!("DRP (g/m^3)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversDRP")
+  # }
 
   as.Date(time)
   #extract the current year
@@ -832,9 +819,9 @@ NOFRiversSFS <- function(data, time=Sys.Date(), start="", end="", class){
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversSFS")
   }
 
-  if(!("Water Clarity (m)" %in% names(data))){
-    print("Incorrect parameter used. For more information on this error, run: ?NOFRiversSFS")
-  }
+  # if(!("Water Clarity (m)" %in% names(data))){
+  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversSFS")
+  # }
 
   as.Date(time)
   #extract the current year
@@ -1112,9 +1099,6 @@ BPU_Check <- function(SiteID){
 }
 
 
-##################################################################################
-
-
 
 ##################################################################################
 #                         SWIMMABILITY FUNCTIONS                                 #
@@ -1211,10 +1195,6 @@ FW_Action_Levels <- function(data ,start="",end="", tme=Sys.Date()){
   return(FWAL_Summary)
 
 }
-
-
-
-##################################################################################
 
 
 
@@ -1650,191 +1630,6 @@ TidalFromDateDF<- function(data){
 
 ##################################################################################
 
-
-###################################################################################
-#                                OLD FUNCTIONS                                   #
-###################################################################################
-
-#seaKenLAWA <- function (x,stat) {
-#  require(wq)
-#  if (!is(x, "ts"))
-#    stop("x must be a 'ts'")
-#  fr <- frequency(x)
-#  S <- 0
-#  varS <- 0
-#  miss <- NULL
-#  slopes <- NULL
-#  for (m in 1:fr) {
-#    xm <- x[cycle(x) == m]
-#    tm <- time(x)[cycle(x) == m]
-#    ken <- mannKen(ts(xm, start = start(x)[1], frequency = 1))
-#   S <- S + ken$S
-#    varS <- varS + ken$varS
-#    miss <- c(miss, ken$miss)
-#    outr <- outer(xm, xm, "-")/outer(tm, tm, "-")
-#    slopes.m <- outr[lower.tri(outr)]
-#    slopes <- c(slopes, slopes.m)
-#  }
-#  sen.slope <- median(slopes, na.rm = TRUE)
-#  if(stat=="mean"){
-#    sen.slope.pct <- 100 * sen.slope/abs(mean(x, na.rm = TRUE))
-#  } else if (stat=="median"){
-#    sen.slope.pct <- 100 * sen.slope/abs(median(x, na.rm = TRUE))
-#  }
-#
-#  Z <- (S - sign(S))/sqrt(varS)
-#  p.value <- 2 * pnorm(-abs(Z))
-#  names(miss) <- as.character(1:m)
-#  list(sen.slope = sen.slope, sen.slope.pct = sen.slope.pct,
-#       p.value = p.value, miss = round(miss, 3))
-#
-#}
-
-#CheckTrends <- function(data,paramcol,start="",end="",bdisc=FALSE,log=FALSE){
-#  require(wq)
-#
-#  if(nchar(start)>1){
-#
-#    start <- as.POSIXct(strptime(start, "%Y-%m-%d"),tz = "Etc/GMT+12")
-#    end <- as.POSIXct(strptime(end, "%Y-%m-%d"),tz = "Etc/GMT+12")
-#    data <- data[with(data, Time> start & Time < end), ]
-#  }
-#
-#
-#  df <- data[,c(3,1,paramcol)]
-#  if(log==T){
-#
-#    for(num in 1:length(df[,3])){
-#      if(df[num,3]==0){df[num,3] <- 1}
-#    }
-#    df[,3] <-log(df[,3])
-#  }
-#  df$depth <- 0
-#  wq <- wqData(df, locus=c(1,2,4), 3, site.order = TRUE, type = "wide")
-#  ts <- tsMake(wq, focus = wq$site[1], layer = 0)
-#
-#  trendtest <- seaKenLAWA(ts,"median")
-#
-#  if(bdisc == TRUE){
-#    if(trendtest$p.value<0.05){
-#      if(trendtest$sen.slope.pct<=-1){
-#        trendscore <- -2
-#      } else if(trendtest$sen.slope.pct>=1){
-#        trendscore <- 2
-#      } else {
-#        trendscore <- sign(trendtest$sen.slope.pct)*1
-#      }
-#    } else{
-#      trendscore <- 0
-#    }
-#  } else {
-#    if(trendtest$p.value<0.05){
-#      if(trendtest$sen.slope.pct<=-1){
-#        trendscore <- 2
-#      } else if(trendtest$sen.slope.pct>=1){
-#        trendscore <- -2
-#      } else {
-#        trendscore <- sign(trendtest$sen.slope.pct)*-1
-#      }
-#    } else{
-#      trendscore <- 0
-#    }
-#  }
-#
-#  trendtest$trendscore <- trendscore
-#
-#  return(trendtest)
-#}
-
-#LAWADistPlots <- function(group){
-#  require(ggplot2)
-#  df1 <- data.frame(x=seq(from = -3, to=3,by=0.01),y=dnorm(seq(from = -3, to=3,by=0.01),mean=0,sd=1))
-#
-#
-#  cord.x1 <- c(-3,seq(-3,-1,0.01),-1)
-#  cord.y1 <- c(0,dnorm(seq(-3,-1,0.01)),0)
-#  cord.x2 <- c(-1,seq(-1,0,0.01),0)
-#  cord.y2 <- c(0,dnorm(seq(-1,0,0.01)),0)
-#  cord.x3 <- c(0,seq(0,1,0.01),1)
-#  cord.y3 <- c(0,dnorm(seq(0,1,0.01)),0)
-#  cord.x4 <- c(1,seq(1,3,0.01),3)
-#  cord.y4 <- c(0,dnorm(seq(1,3,0.01)),0)
-#
-#  if(group==1){
-#
-#
-#    outputplot <- qplot(x,y,data=df1,geom="line",col=I("limegreen"),size=I(2.5))+
-#      theme(axis.title.x=element_blank(),axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-#      theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+
-#      geom_ribbon(data=subset(df1 ,x>(1) & x<(3)),aes(ymax=y),ymin=0,fill="limegreen",colour="limegreen",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-1) & x<(0)),aes(ymax=y),ymin=0,fill=NA,colour="limegreen",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(0) & x<(1)),aes(ymax=y),ymin=0,fill=NA,colour="limegreen",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-3) & x<(-1)),aes(ymax=y),ymin=0,fill=NA,colour="limegreen",alpha=0.5,lwd=1.5)
-#
-#
-#
-#  }else if(group==2){
-#
-#    outputplot <- qplot(x,y,data=df1,geom="line",col=I("steelblue1"),size=I(2.5))+
-#      theme(axis.title.x=element_blank(),axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-#      theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+
-#      geom_ribbon(data=subset(df1 ,x>(0) & x<(1)),aes(ymax=y),ymin=0,fill="steelblue1",colour="steelblue1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-1) & x<(0)),aes(ymax=y),ymin=0,fill=NA,colour="steelblue1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-3) & x<(-1)),aes(ymax=y),ymin=0,fill=NA,colour="steelblue1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(1) & x<(3)),aes(ymax=y),ymin=0,fill=NA,colour="steelblue1",alpha=0.5,lwd=1.5)
-#
-#
-#  }else if(group==3){
-#
-#
-#    outputplot <- qplot(x,y,data=df1,geom="line",col=I("darkorange1"),size=I(2.5))+
-#      theme(axis.title.x=element_blank(),axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-#      theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+
-#     geom_ribbon(data=subset(df1 ,x>(-1) & x<(0)),aes(ymax=y),ymin=0,fill="darkorange1",colour="darkorange1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-3) & x<(-1)),aes(ymax=y),ymin=0,fill=NA,colour="darkorange1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(0) & x<(1)),aes(ymax=y),ymin=0,fill=NA,colour="darkorange1",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(1) & x<(3)),aes(ymax=y),ymin=0,fill=NA,colour="darkorange1",alpha=0.5,lwd=1.5)
-#
-#
-#  }else{
-#
-#    outputplot <- qplot(x,y,data=df1,geom="line",col=I("red3"),size=I(2.5))+
-#      theme(axis.title.x=element_blank(),axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-#      theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())+
-#      geom_ribbon(data=subset(df1 ,x>(1) & x<(3)),aes(ymax=y),ymin=0,fill=NA,colour="red3",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-1) & x<(0)),aes(ymax=y),ymin=0,fill=NA,colour="red3",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(0) & x<(1)),aes(ymax=y),ymin=0,fill=NA,colour="red3",alpha=0.5,lwd=1.5)+
-#      geom_ribbon(data=subset(df1 ,x>(-3) & x<(-1)),aes(ymax=y),ymin=0,fill="red3",colour="red3",alpha=0.5,lwd=1.5)
-#
-#  }
-#  return(outputplot)
-#}
-
-# Site_Metadata <- function(SiteList){
-#
-#   SiteLookup <- data.frame(locationid = 0, SiteName = 0, RECSeg=0, Easting = 0, Northing = 0)
-#
-#   for(i in 1:length(SiteList)){
-#
-#     SiteID <- SiteList[i]
-#     locationdf <- searchlocationid(SiteID)
-#     SiteName <-  as.character(locationdf[1,4])
-#     rec <- locationdf[1,36]
-#     easting <- locationdf[1,28]
-#     northing <- locationdf[1,29]
-#
-#     SiteLookup[i,1] <- as.character(SiteID)
-#     SiteLookup[i,2] <- SiteName
-#     SiteLookup[i,3] <- rec
-#     SiteLookup[i,4] <- easting
-#     SiteLookup[i,5] <- northing
-#
-#   }
-#
-#
-#   return(SiteLookup)
-#
-# }
 
 
 
