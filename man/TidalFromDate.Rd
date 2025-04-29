@@ -14,15 +14,18 @@ Date(s) to obtain tidal information for, in quotation marks. In "yyyy/mm/dd hh:m
 \item{SecondaryPort}{
 The most appropriate secondary port to use.  Options include:
 
-* Bowentown
-* Kauri Point
-* Maketu
-* Ohope
-* Omokoroa
-* Opotiki
-* Rangitaiki
-* Town Wharf
-* Whakatane
+\enumerate{
+  \item Bowentown
+  \item Kauri Point
+  \item Maketu
+  \item Ohope
+  \item Omokoroa
+  \item Opotiki
+  \item Rangitaiki
+  \item Town Wharf
+  \item Whakatane
+}
+
 
 Tauranga tidal heights will be used if no secondary port is chosen.
 }

@@ -517,7 +517,7 @@ NOFLakesRiversNH3 <- function (data, start = "", end = ""){
 
 ##################################################################################
 
-NOFRiversNO32 <- function (data, time=Sys.Date(), start="", end=""){
+NOFRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
   require(dplyr)
 
   if(ncol(data)!=4){
