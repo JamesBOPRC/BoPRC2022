@@ -1516,13 +1516,13 @@ TidalFromDate <- function (date,SecondaryPort = "none")
 
   for (i in 1:nrow(tidalsummary)) {
     hamish <- min(as.numeric(abs(difftime(TideData$Date,
-                                          (as.POSIXlt(date[i])), units = "secs"))))
-    closestdatedown <- as.POSIXlt((as.POSIXlt(date[i]) -
-                                     hamish))
-    closestdatedown <- as.POSIXlt(closestdatedown)
+                                          (as.POSIXlt(date[i],tz="etc/GMT+12")), units = "secs"))))
+    closestdatedown <- as.POSIXlt((as.POSIXlt(date[i],tz="etc/GMT+12") -
+                                     hamish),tz="etc/GMT+12")
+    closestdatedown <- as.POSIXlt(closestdatedown,tz="etc/GMT+12")
     closestdatedown <- as.character(closestdatedown)
-    closestdateup <- as.POSIXlt((as.POSIXlt(date[i]) + hamish))
-    closestdateup <- as.POSIXlt(closestdateup)
+    closestdateup <- as.POSIXlt((as.POSIXlt(date[i],tz="etc/GMT+12") + hamish),tz="etc/GMT+12")
+    closestdateup <- as.POSIXlt(closestdateup,tz="etc/GMT+12")
     closestdateup <- as.character(closestdateup)
     TideData$Date <- as.character(TideData$Date)
     if ((closestdateup[i]) %in% (TideData$Date)) {
@@ -1532,10 +1532,9 @@ TidalFromDate <- function (date,SecondaryPort = "none")
                       c(-1:0), ]
       hh <- b[1, 2]
       jj <- b[2, 2]
-      first <- as.numeric(difftime(date[i], (as.POSIXlt(b[1,
-                                                          1])), unit = "hours"))
-      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1])),
-                                     (as.POSIXlt(b[1, 1])), unit = "hours"))
+      first <- as.numeric(difftime(date[i], (as.POSIXlt(b[1,1],tz="etc/GMT+12")), unit = "hours"))
+      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1],tz="etc/GMT+12")),
+                                     (as.POSIXlt(b[1, 1],tz="etc/GMT+12")), unit = "hours"))
       phase <- ((first)/(secondd) * pi)
       prop <- ((cos(phase) + 1)/2)
       propo <- format(round(prop, 3), nsmall = 3)
@@ -1558,9 +1557,9 @@ TidalFromDate <- function (date,SecondaryPort = "none")
       jj <- b[2, 2]
       j <- b[2, 3]
       first <- as.numeric(difftime(date[i], (as.POSIXlt(b[1,
-                                                          1])), unit = "hours"))
-      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1])),
-                                     (as.POSIXlt(b[1, 1])), unit = "hours"))
+                                                          1],tz="etc/GMT+12")), unit = "hours"))
+      secondd <- as.numeric(difftime((as.POSIXlt(b[2, 1],tz="etc/GMT+12")),
+                                     (as.POSIXlt(b[1, 1],tz="etc/GMT+12")), unit = "hours"))
       phase <- ((first)/(secondd) * pi)
       prop <- ((cos(phase) + 1)/2)
       propo <- format(round(prop, 3), nsmall = 3)
