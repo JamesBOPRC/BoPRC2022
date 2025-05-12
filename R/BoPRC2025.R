@@ -1490,23 +1490,33 @@ TidalFromDate <- function (date,SecondaryPort = "none")
     TideData <- data(Bowentown)
 
   }else if(SecondaryPort == "Kauri Point"){
-    TideData <- data(KauriPoint)
+    data("KauriPoint")
+    TideData <- KauriPoint
+
   }else if(SecondaryPort == "Maketu"){
-    TideData <- data(Maketu)
+    data("Maketu")
+    TideData <- Maketu
   }else if(SecondaryPort == "Ohope"){
-    TideData <- data(Ohope)
+    data("Ohope")
+    TideData <- Ohope
   }else if(SecondaryPort == "Omokoroa"){
-    TideData <- data(Omokoroa)
+    data("Omokoroa")
+    TideData <- Omokoroa
   }else if(SecondaryPort == "Opotiki"){
-    TideData <- data(Opotiki)
+    data("Opotiki")
+    TideData <- Opotiki
   }else if(SecondaryPort == "Rangitaiki"){
-    TideData <- data(Rangitaiki)
+    data("Rangitaiki")
+    TideData <- Rangitaiki
   }else if(SecondaryPort == "Town Wharf"){
-    TideData <- data(TownWharf)
+    data("TownWharf")
+    TideData <- TownWharf
   }else if(SecondaryPort == "Whakatane"){
-    TideData <- data(Whakatane)
+    data("Whakatane")
+    TideData <- Whakatane
   }else{
-    TideData <- data(Tauranga)
+    data("Tauranga")
+    TideData <- Tauranga
   }
 
   names(TideData) = c("Date", "Height", "TideHeight")
