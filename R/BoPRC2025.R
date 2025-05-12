@@ -1487,25 +1487,25 @@ TidalFromDate <- function (date,SecondaryPort = "none")
 
 
   if(SecondaryPort == "Bowentown"){
-    TideData <- readRDS("Tide_Datasets/Bowentown.Rds")
+    TideData <- readRDS("data/Bowentown.Rds")
   }else if(SecondaryPort == "Kauri Point"){
-    TideData <- readRDS("Tide_Datasets/KauriPoint.Rds")
+    TideData <- readRDS("data/KauriPoint.Rds")
   }else if(SecondaryPort == "Maketu"){
-    TideData <- readRDS("Tide_Datasets/Maketu.Rds")
+    TideData <- readRDS("data/Maketu.Rds")
   }else if(SecondaryPort == "Ohope"){
-    TideData <- readRDS("Tide_Datasets/Ohope.Rds")
+    TideData <- readRDS("data/Ohope.Rds")
   }else if(SecondaryPort == "Omokoroa"){
-    TideData <- readRDS("Tide_Datasets/Omokoroa.Rds")
+    TideData <- readRDS("data/Omokoroa.Rds")
   }else if(SecondaryPort == "Opotiki"){
-    TideData <- readRDS("Tide_Datasets/Opotiki.Rds")
+    TideData <- readRDS("data/Opotiki.Rds")
   }else if(SecondaryPort == "Rangitaiki"){
-    TideData <- readRDS("Tide_Datasets/Rangitaiki.Rds")
+    TideData <- readRDS("data/Rangitaiki.Rds")
   }else if(SecondaryPort == "Town Wharf"){
-    TideData <- readRDS("Tide_Datasets/TownWharf.Rds")
+    TideData <- readRDS("data/TownWharf.Rds")
   }else if(SecondaryPort == "Whakatane"){
-    TideData <- readRDS("Tide_Datasets/Whakatane.Rds")
+    TideData <- readRDS("data/Whakatane.Rds")
   }else{
-    TideData <- readRDS("Tide_Datasets/Tauranga.Rds")
+    TideData <- readRDS("data/Tauranga.Rds")
   }
 
   names(TideData) = c("Date", "Height", "TideHeight")
