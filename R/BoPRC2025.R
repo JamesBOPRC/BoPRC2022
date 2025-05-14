@@ -424,7 +424,7 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
 ##################################################################################
 
 
-NOFLakesRiversNH3 <- function (data, start = "", end = ""){
+NOFLakesRiversNH4N <- function (data, start = "", end = ""){
 
 
   # if(!("Ammoniacal N (g/m^3)" %in% names(data))){
@@ -1241,7 +1241,7 @@ NERMN_GroundWater<- function(){
            "JL624269","JL080754", "IL899951","JM752520","FK779059","FJ656900","FJ442517",
            "GI753566_52","GI753566_53","GI439843","GI156361","EJ981312","FK380119","FJ141820",
            "DL854507","EL141079","FK137414","EL275448","FK317861","DL916315","DK584766",
-           "GJ663803","FP328107_73m","FP328107_25m","FP328107_45m","CP689847","CS035256",
+           "GJ663803","FP328107_73","FP328107_25","FP328107_45","CP689847","CS035256",
            "DP806150","EP650170","BQ995748","BQ625302","CR253391","DP695698","BQ541760_1",
            "BR797412_1","BR949011_1","CQ275568","DP547219","DP547217","DP184539","NL873636",
            "NK967982","NL621629","NL622630","NL552065","NL551065","NL552066","NL891140",
@@ -1277,7 +1277,7 @@ NERMN_River<- function(){
            "BQ708712","BQ708712","BR809582","BQ723939","BS961133","DO686858","DO712717",
            "NK608503","ML715056","CP466747","DP281304","CO938527","HN674689","EO451883",
            "BQ739463","KL998150","LK082095","IG691428","IL818464","KL919939","IL891937",
-           "FO761142", "GI416337"))
+           "FO761142","GO081642"))
 }
 
 ##################################################################################
@@ -1289,17 +1289,26 @@ Geothermal_Sites<-function(){
 ##################################################################################
 
 NERMN_Lake<-function(){
-  intergrated<-list(Intergrated=c("JK448422_INT","HL508168_INT","HL030557_INT","GL051366_INT",
-                                  "FL479468_INT","FL274353_INT","EL805168_INT","EK783777_INT",
+  intergrated<-list(Intergrated=c("HL508168_INT","HL030557_INT","GL051366_INT",
+                                  "FL479468_INT","FL274353_INT","EK783777_INT",
                                   "GK015589_INT","FK427028_INT",
-                                  "FJ164707_INT","FJ295574","FJ988648_INT", "GI084907_INT",
-                                  "GI617624_INT","FI680541_INT"))
-  hypolimnion<-list(Hypolimnion=c("JK448422_HYP","EL805168_HYP","EK783777_HYP", "FK427028_HYP",
-                                  "FJ164707_HYP", "FJ988648_HYP", "GI084907_HYP","FI680541_HYP"))
-  bottom<-list(Bottom=c("JK448422_BOT","EL805168_BOT","EK783777_BOT","FK427028_BOT",
-                        "FJ164707_BOT","FJ988648_BOT", "GI084907_BOT", "GI617924_BOT",
-                        "FI680541_HYP"))
-  discrete<-list(Discrete=c("EL805168_DIS","EK783777_DIS"))
+                                  "FJ164707_INT",
+                                  "GI617624_INT","FI680541_INT","EL802148_INT","FJ986647_INT","GI097932_INT"))
+  hypolimnion<-list(Hypolimnion=c("HL508168_HYP","GL051366_HYP",
+                                  "EK783777_HYP",
+                                  "GK015589_HYP","FK427028_HYP",
+                                  "FJ164707_HYP",
+                                  "FI680541_HYP","EL802148_HYP","FJ986647_HYP","GI097932_HYP"))
+  bottom<-list(Bottom=c("HL508168_BOT","HL030557_BOT","GL051366_BOT",
+                        "FL479468_BOT","FL274353_BOT","EK783777_BOT",
+                        "GK015589_BOT","FK427028_BOT",
+                        "FJ164707_BOT",
+                        "GI617624_BOT","FI680541_BOT","EL802148_BOT","FJ986647_BOT","GI097932_BOT"))
+  discrete<-list(Discrete=c("HL508168_DIS","HL030557_DIS","GL051366_DIS",
+                            "FL479468_DIS","FL274353_DIS","EK783777_DIS",
+                            "GK015589_DIS","FK427028_DIS",
+                            "FJ164707_DIS",
+                            "GI617624_DIS","FI680541_DIS","EL802148_DIS","FJ986647_DIS","GI097932_DIS"))
 
   mylist<-list(intergrated,hypolimnion,bottom,discrete)
   return(mylist)
@@ -1309,7 +1318,7 @@ NERMN_Lake<-function(){
 
 lakelist<-function(){
   return(c("JK448422_INT","HL508168_INT","HL030557_INT","GL051366_INT","FL479468_INT",
-           "FL274353_INT","EL805168_INT","EK783777_INT","GK015589_INT","FK427028_INT",
+           "FL274353_INT","EK783777_INT","GK015589_INT","FK427028_INT",
            "FJ164707_INT","FJ295574","FJ988648_INT", "GI084907_INT", "GI617624_INT",
            "FI680541_INT","JK448422_HYP","EL805168_HYP","EK783777_HYP", "FK427028_HYP",
            "FJ164707_HYP", "FJ988648_HYP", "GI084907_HYP","FI680541_HYP",
@@ -1319,7 +1328,7 @@ lakelist<-function(){
 }
 
 
-
+###################################################################################
 
 Bathing_River <- function(){
   return(c("EK537123","EL192023","EL143137","EK405487","EK260170","FL230406","EL613536","HL149406","RO629568",
@@ -1328,12 +1337,33 @@ Bathing_River <- function(){
                                 "FO397216","CO809137","EO564565","BQ708712"))
   }
 
+
+###################################################################################
 Bathing_Lake <- function(){
-  return(c("HL337241","GL606421","GL314263","FL289316","EK935598","EL224087","EL438512","FK325034","FJ157807",
-                "FJ737728","FI660574","GI442508","HL129560"))
+  return(c("GL606421","GL314263","FL289316","EK935598","EL224087","EL438512","FK325034","FJ157807",
+           "FJ737728","FI660574","GI442508","HL129560","HL338238"))
 }
 
 #################################################################################
+
+Cyanobacteria_Sites <- function(){
+
+  return(c("EK984647",
+           "EL224087",
+           "EL606530",
+           "FI660574",
+           "FL168384",
+           "FL289316",
+           "FL344809",
+           "FL356693",
+           "FL416536",
+           "FL779744",
+           "GL604463",
+           "HL129560",
+           "HL143688"
+  ))
+
+}
 
 
 ##################################################################################
