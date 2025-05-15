@@ -70,3 +70,4 @@ This function uses the AQUARIUS WQ Parameter "E coli" when using the AQMultiExtr
 Df<-AQMultiExtract("RN123610", "E coli")
 #do a NOF Total phosphurus assessment on the data frame, for the most recent 1 year period jan-dec
 NOFLakesRiversECOLI(Df)
+}

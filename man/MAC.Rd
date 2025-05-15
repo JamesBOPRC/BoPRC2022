@@ -31,3 +31,4 @@ df<-AQMultiExtract("EQ065035","Enterococci")
 
 #perform marine MAC analysis
 MAC(df, Type="Marine")
+}
