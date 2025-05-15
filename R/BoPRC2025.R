@@ -107,7 +107,6 @@ Percentile_Plot <- function(Percentile){
   }
 }
 
-
 # do
 Percentile_Calc <- function(df, colnum, value){
   p <- ecdf(as.numeric(as.character(df[,colnum])))
@@ -192,7 +191,7 @@ NOFLakesPhytoplankton <- function(data, time=Sys.time(), start="", end=""){
 
 ##################################################################################
 
-NOFLakesRiversCyanobacteria<-function(data,time=Sys.Date(), start="", end="") {
+NOFLakesCyanobacteria<-function(data,time=Sys.Date(), start="", end="") {
 
   if(ncol(data)!=5){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesPhytoplankton")
@@ -484,7 +483,7 @@ NOFLakesRiversNH4N <- function (data, start = "", end = ""){
 
 ##################################################################################
 
-NOFRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
+NOFLakesRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
   require(dplyr)
 
   if(ncol(data)!=4){
