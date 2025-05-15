@@ -2,7 +2,7 @@
 \alias{Ecoli_Banding}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-NOF Assessment - Ec.Coli banding using alternate methods
+NOF Assessment - E. coli banding using alternate methods
 }
 \description{
 This function will output the National Objectives Framework attribute bandings for E. Coli from inputted values. This function is to be used if an error occurs with the NOFLakesRiversECOLI function, due to a site occupying multiple bands at once. Using either mean, max or 95th percentile methods, the function will compute attribute bands using the percent exceedances over 540/100mL, percent exceedances over 260/100mL, median concentration /100mL and 95th percentile of E. Coli/100mL. The default method is maximum, which is used in the NOFLakesRiversECOLI function.   The outputted attribute band value can be interpreted through the National Policy Statement for Freshwater Management 2020 or within the values section below. }

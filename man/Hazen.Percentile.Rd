@@ -48,7 +48,10 @@ Depending on the desired percentile, there are differing number of data points r
 }
 
 \examples{
+
 #Create a dummy dataset
 data<-rnorm(10000, mean=50,sd=10)
 # Calculate the Hazen 95th percentile
 Hazen.Percentile (data, 95)
+
+}

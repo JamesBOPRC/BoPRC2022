@@ -1,7 +1,4 @@
 
-TaurangaTides<-read.csv("Book1.csv")
-usethis::use_data(TaurangaTides, internal = TRUE, overwrite = TRUE)
-
 
 ##################################################################################
 #                               GENERAL FUNCTIONS                                #
@@ -117,9 +114,6 @@ Percentile_Calc <- function(df, colnum, value){
   return(p(value)*100)
 }
 
-##################################################################################
-
-
 
 ##################################################################################
 #                                NOF FUNCTIONS                                   #
@@ -129,10 +123,6 @@ NOFLakesPhytoplankton <- function(data, time=Sys.time(), start="", end=""){
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesPhytoplankton")
   }
-
-  # if(!("Chloro a (mg/m^3)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
-  # }
 
   as.Date(time)
   #extract the current year
@@ -174,24 +164,24 @@ NOFLakesPhytoplankton <- function(data, time=Sys.time(), start="", end=""){
   }
 
 
-
-
   names(data) <- c("ID","Name","Time","Value")
 
-
-
   ChlASummary<- data %>% group_by(Name) %>% summarise("Minimum" = min(Value,na.rm = TRUE),
-                                                      "Maximum" = max(Value,na.rm = TRUE), "Median" = median(Value,na.rm = TRUE),
+                                                      "Maximum" = max(Value,na.rm = TRUE),
+                                                      "Median" = median(Value,na.rm = TRUE),
                                                       n = length(Value[!is.na(Value)]))
 
-
-
-
   for (i in 1:nrow(ChlASummary)){
-    MedianBand <- ifelse(ChlASummary[i,4] <=2,1,ifelse(ChlASummary[i,4]<=5,2,ifelse(ChlASummary[i,4]<=12,3,4)))
-    MaximumBand<- ifelse(ChlASummary[i,3] <=10,1,ifelse(ChlASummary[i,3]<=25,2,ifelse(ChlASummary[i,3]<=60,3,4)))
+    MedianBand <- ifelse(ChlASummary[i,4] <=2,1,
+                         ifelse(ChlASummary[i,4]<=5,2,
+                                ifelse(ChlASummary[i,4]<=12,3,4)))
+    MaximumBand<- ifelse(ChlASummary[i,3] <=10,1,
+                         ifelse(ChlASummary[i,3]<=25,2,
+                                ifelse(ChlASummary[i,3]<=60,3,4)))
     CombBandNo <- ifelse(MedianBand >= MaximumBand,MedianBand,MaximumBand)
-    FinalBand  <- ifelse(CombBandNo == 1, "A", ifelse(CombBandNo == 2 , "B", ifelse(CombBandNo == 3, "C", "D")))
+    FinalBand  <- ifelse(CombBandNo == 1, "A",
+                         ifelse(CombBandNo == 2 , "B",
+                                ifelse(CombBandNo == 3, "C", "D")))
     ChlASummary$AttributeBand[i]  <- FinalBand
 
   }
@@ -207,10 +197,6 @@ NOFLakesRiversCyanobacteria<-function(data,time=Sys.Date(), start="", end="") {
   if(ncol(data)!=5){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesPhytoplankton")
   }
-
-  # if(!(c("Total Cyanobacteria (mm^3/l)","Potentially Toxic Cyanobacteria (mm^3/l)") %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesPhytoplankton")
-  # }
 
   require(lubridate)
   require(dplyr)
@@ -253,21 +239,26 @@ NOFLakesRiversCyanobacteria<-function(data,time=Sys.Date(), start="", end="") {
     data<-data[with(data, Time> starty & Time <endy),]
   }
 
-
-
-
   names(data)<-c("ID","Name","Time","Cyano","PT_Cyano")
 
   cyanosummary<- data %>% group_by(Name) %>% summarise(PToxic=quantile(PT_Cyano, 0.8,na.rm=TRUE),
-                                                       NToxic=quantile(Cyano, 0.8, na.rm=TRUE),  ptoxicband=ifelse(PToxic>1.8, "D", ifelse(PToxic>1, "C", ifelse(PToxic>0.5,"B","A"))),
-                                                       ntoxicband=ifelse(NToxic>10,"D", ifelse(NToxic>1.8, "C", ifelse(NToxic>0.5, "B", "A"))))
+                                                       NToxic=quantile(Cyano, 0.8, na.rm=TRUE),
+                                                       ptoxicband=ifelse(PToxic>1.8, "D",
+                                                                         ifelse(PToxic>1, "C",
+                                                                                ifelse(PToxic>0.5,"B","A"))),
+                                                       ntoxicband=ifelse(NToxic>10,"D",
+                                                                         ifelse(NToxic>1.8, "C",
+                                                                                ifelse(NToxic>0.5, "B", "A"))))
   for (i in nrow(cyanosummary)){
 
-    finalband<- ifelse(cyanosummary$NToxic<=1, cyanosummary$ntoxicband, ifelse(cyanosummary$PToxic>1,cyanosummary$ptoxicband, cyanosummary$ntoxicband))
+    finalband<- ifelse(cyanosummary$NToxic<=1, cyanosummary$ntoxicband,
+                       ifelse(cyanosummary$PToxic>1,cyanosummary$ptoxicband, cyanosummary$ntoxicband))
     cyanosummary$AttributeBand<-finalband[i]
-    numericband<- ifelse(cyanosummary$NToxic<=1.0, cyanosummary$NToxic, ifelse(cyanosummary$PToxic>1.0, cyanosummary$PToxic, cyanosummary$NToxic))
+    numericband<- ifelse(cyanosummary$NToxic<=1.0, cyanosummary$NToxic,
+                         ifelse(cyanosummary$PToxic>1.0, cyanosummary$PToxic, cyanosummary$NToxic))
     cyanosummary$NumericBand<-numericband[i]
-    stat<-ifelse(cyanosummary$NToxic<=1.0, "Total Biovolume", ifelse(cyanosummary$PToxic>1.0, "Potentially Toxic Biovolume", "Total Biovolume"))
+    stat<-ifelse(cyanosummary$NToxic<=1.0, "Total Biovolume",
+                 ifelse(cyanosummary$PToxic>1.0, "Potentially Toxic Biovolume", "Total Biovolume"))
     cyanosummary$Stat<-stat[i]
   }
   return(cyanosummary)
@@ -279,10 +270,6 @@ NOFLakesTN <- function(data, laketype="Stratified", time=Sys.Date(), start="", e
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesTN")
   }
-
-  # if(!("N (Tot) (g/m^3)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTN")
-  # }
 
   if(!(laketype == "Polymictic"|laketype == "polymictic"|laketype == "Stratified"|laketype == "stratified" )){
     stop("Incorrect laketype used. For more information on this error, run: ?NOFLakesTN")
@@ -333,16 +320,20 @@ NOFLakesTN <- function(data, laketype="Stratified", time=Sys.Date(), start="", e
   data$Value <- data$Value*1000
 
   TNSummary<- data %>% group_by(Name) %>% summarise("Minimum" = min(Value,na.rm = TRUE),
-                                                    "Maximum" = max(Value,na.rm = TRUE), "Median" = median(Value,na.rm = TRUE),
+                                                    "Maximum" = max(Value,na.rm = TRUE),
+                                                    "Median" = median(Value,na.rm = TRUE),
                                                     n = length(Value[!is.na(Value)]))
 
   for (i in 1:nrow(TNSummary)){
     if (laketype == "Polymictic"|laketype == "polymictic"){
-      FinalBand<- ifelse(TNSummary[i,4] <=300,"A",ifelse(TNSummary[i,4]<=500,"B",ifelse(TNSummary[i,4]<=800,"C","D")))
+      FinalBand<- ifelse(TNSummary[i,4] <=300,"A",
+                         ifelse(TNSummary[i,4]<=500,"B",
+                                ifelse(TNSummary[i,4]<=800,"C","D")))
 
     }else{
 
-      FinalBand<- ifelse(TNSummary[i,4] <=160,"A",ifelse(TNSummary[i,4]<=350,"B",ifelse(TNSummary[i,4]<=750,"C","D")))
+      FinalBand<- ifelse(TNSummary[i,4] <=160,"A",ifelse(TNSummary[i,4]<=350,"B",
+                                                         ifelse(TNSummary[i,4]<=750,"C","D")))
 
     }
     TNSummary$AttributeBand[i]  <- FinalBand
@@ -358,10 +349,6 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesTP")
   }
-
-  # if(!("P (Tot) (g/m^3)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesTP")
-  # }
 
   require(lubridate)
   require(dplyr)
@@ -415,10 +402,7 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
     AttributeBand = ifelse(TPSummary[i,4] <=10,"A",ifelse(TPSummary[i,4]<=20,"B",ifelse(TPSummary[i,4]<=50,"C","D")))
     TPSummary$AttributeBand[i]<-AttributeBand
   }
-
-
   return(data.frame(TPSummary))
-
 }
 
 ##################################################################################
@@ -426,22 +410,8 @@ NOFLakesTP <- function(data, time=Sys.Date(), start="", end="") {
 
 NOFLakesRiversNH4N <- function (data, start = "", end = ""){
 
-
-  # if(!("Ammoniacal N (g/m^3)" %in% names(data))){
-  #   print("Ammoniacal N parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
-  # }
-
-  #if(class(adjust)!="logical"){
-  # stop("Adjust arguement must be logical. For more information on this error, run: ?NOFLakesRiversNH3")
-  # }
-
-
   require(dplyr)
   if (ncol(data)==5) {
-
-    # if(!("pH (pH Units)" %in% names(data))){
-    #   print("pH parameter must be used. For more information on this error, run: ?NOFLakesRiversNH3")
-    # }
 
     names(data) <- c("ID", "Name", "Time", "Value", "pH")
     data$pH <- round(data$pH, 1)
@@ -481,7 +451,6 @@ NOFLakesRiversNH4N <- function (data, start = "", end = ""){
     data <- data[with(data, Time> start & Time < end), ]
   }
 
-
   data <- data[,c(1:4)]
   names(data) <- c("ID", "Name", "Time", "Value")
   if (nchar(start) > 1) {
@@ -495,25 +464,23 @@ NOFLakesRiversNH4N <- function (data, start = "", end = ""){
 
   data$Value[data$Value<0]<-0
 
-  NH3Summary <- data %>% group_by(Name) %>% summarise(Minimum = min(Value,
-                                                                    na.rm = TRUE), Maximum = max(Value, na.rm = TRUE), Median = median(Value,
-                                                                                                                                       na.rm = TRUE), n = length(Value[!is.na(Value)]))
+  NH3Summary <- data %>% group_by(Name) %>% summarise(Minimum = min(Value, na.rm = TRUE),
+                                                      Maximum = max(Value, na.rm = TRUE),
+                                                      Median = median(Value, na.rm = TRUE),
+                                                      n = length(Value[!is.na(Value)]))
   for (i in 1:nrow(NH3Summary)) {
-    MedianBand <- ifelse(NH3Summary[i, 4] <= 0.03, 1, ifelse(NH3Summary[i,
-                                                                        4] <= 0.24, 2, ifelse(NH3Summary[i, 4] <= 1.3, 3,
-                                                                                              4)))
-    MaximumBand <- ifelse(NH3Summary[i, 3] <= 0.05, 1, ifelse(NH3Summary[i,
-                                                                         3] <= 0.4, 2, ifelse(NH3Summary[i, 3] <= 2.2, 3,
-                                                                                              4)))
-    CombBandNo <- ifelse(MedianBand >= MaximumBand, MedianBand,
-                         MaximumBand)
-    FinalBand <- ifelse(CombBandNo == 1, "A", ifelse(CombBandNo ==
-                                                       2, "B", ifelse(CombBandNo == 3, "C", "D")))
+    MedianBand <- ifelse(NH3Summary[i, 4] <= 0.03, 1,
+                         ifelse(NH3Summary[i,4] <= 0.24, 2,
+                                ifelse(NH3Summary[i, 4] <= 1.3, 3,4)))
+    MaximumBand <- ifelse(NH3Summary[i, 3] <= 0.05, 1,
+                          ifelse(NH3Summary[i,3] <= 0.4, 2,
+                                 ifelse(NH3Summary[i, 3] <= 2.2, 3,4)))
+    CombBandNo <- ifelse(MedianBand >= MaximumBand, MedianBand,MaximumBand)
+    FinalBand <- ifelse(CombBandNo == 1, "A", ifelse(CombBandNo == 2, "B", ifelse(CombBandNo == 3, "C", "D")))
     NH3Summary$AttributeBand[i] <- FinalBand
   }
   return(data.frame(NH3Summary))
 }
-
 
 ##################################################################################
 
@@ -539,7 +506,6 @@ NOFRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
     data <- data[with(data, Time> start & Time < end), ]
   }
 
-
   else {
     #take last year
     lastyear<-nowy-1
@@ -555,21 +521,23 @@ NOFRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
 
   names(data) <- c("ID", "Name", "Time", "Value")
 
-  NO3Summary <- data %>% group_by(Name) %>% summarise(Minimum = min(Value,
-                                                                    na.rm = TRUE), Maximum = max(Value, na.rm = TRUE), Median = median(Value,
-                                                                                                                                       na.rm = TRUE), Percentile95 = quantile(Value, 0.95, na.rm = TRUE),
-                                                      n = length(Value[!is.na(Value)]))
+  NO3Summary <- data %>% group_by(Name) %>%
+    summarise(Minimum = min(Value,na.rm = TRUE),
+              Maximum = max(Value, na.rm = TRUE),
+              Median = median(Value, na.rm = TRUE),
+              Percentile95 = quantile(Value, 0.95, na.rm = TRUE),
+              n = length(Value[!is.na(Value)]))
+
   for (i in 1:nrow(NO3Summary)) {
-    MedianBand <- ifelse(NO3Summary[i, 4] <= 1, 1, ifelse(NO3Summary[i,
-                                                                     4] <= 2.4, 2, ifelse(NO3Summary[i, 4] <= 6.9, 3,
-                                                                                          4)))
+    MedianBand <- ifelse(NO3Summary[i, 4] <= 1, 1,
+                         ifelse(NO3Summary[i,4] <= 2.4, 2,
+                                ifelse(NO3Summary[i, 4] <= 6.9, 3,4)))
     PercentileBand <- ifelse(NO3Summary[i, 5] <= 1.5, 1,
-                             ifelse(NO3Summary[i, 5] <= 3.5, 2, ifelse(NO3Summary[i,
-                                                                                  5] <= 9.8, 3, 4)))
-    CombBandNo <- ifelse(MedianBand >= PercentileBand, MedianBand,
-                         PercentileBand)
-    FinalBand <- ifelse(CombBandNo == 1, "A", ifelse(CombBandNo ==
-                                                       2, "B", ifelse(CombBandNo == 3, "C", "D")))
+                             ifelse(NO3Summary[i, 5] <= 3.5, 2,
+                                    ifelse(NO3Summary[i,5] <= 9.8, 3, 4)))
+    CombBandNo <- ifelse(MedianBand >= PercentileBand, MedianBand,PercentileBand)
+    FinalBand <- ifelse(CombBandNo == 1, "A", ifelse(CombBandNo ==2, "B",
+                                                     ifelse(CombBandNo == 3, "C", "D")))
     NO3Summary$AttributeBand[i] <- FinalBand
   }
   return(data.frame(NO3Summary))
@@ -577,14 +545,10 @@ NOFRiversNO3 <- function (data, time=Sys.Date(), start="", end=""){
 
 ##################################################################################
 
-NOFLakesRiversECOLI <- function (data,time=Sys.Date(), start = "", end = ""){
+NOFLakesRiversECOLI <- function (data,time=Sys.Date(), start = "", end = "",err_mtd="max"){
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFLakesRiversECOLI")
   }
-
-  # if(!("E coli (cfu/100ml)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFLakesRiversECOLI")
-  # }
 
   require(dplyr)
   as.Date(time)
@@ -637,8 +601,6 @@ NOFLakesRiversECOLI <- function (data,time=Sys.Date(), start = "", end = ""){
   )
   return(ECOLISummary)
 }
-
-
 
 ##################################################################################
 
@@ -695,9 +657,6 @@ NOFRiversPeriphyton<-function(data, time=Sys.Date(), start="", end="",class="Def
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversPeriphyton")
   }
 
-  # if(!("Chloro Periphyton (mg/m^2)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversPeriphyton")
-  # }
 
   as.Date(time)
   #extract the current year
@@ -709,7 +668,6 @@ NOFRiversPeriphyton<-function(data, time=Sys.Date(), start="", end="",class="Def
     end <- as.POSIXct(strptime(end, "%Y-%m-%d"),tz = "Etc/GMT+12")
     data <- data[with(data, Time> start & Time < end), ]
   }
-
 
   else {
     #take last year
@@ -728,20 +686,26 @@ NOFRiversPeriphyton<-function(data, time=Sys.Date(), start="", end="",class="Def
 
 
   PeriphytonSummary<- data %>% group_by(Name) %>% summarise(Minimum = min(Value,na.rm = TRUE),
-                                                            Maximum = max(Value,na.rm = TRUE), Median = median(Value,na.rm = TRUE),
-                                                            Percentile92 = quantile(Value,0.92,na.rm = TRUE), Percentile83=quantile(Value, 0.83, na.rm=TRUE),
+                                                            Maximum = max(Value,na.rm = TRUE),
+                                                            Median = median(Value,na.rm = TRUE),
+                                                            Percentile92 = quantile(Value,0.92,na.rm = TRUE),
+                                                            Percentile83=quantile(Value, 0.83, na.rm=TRUE),
                                                             n = length(Value[!is.na(Value)]))
 
   if(class=="Default"|class=="default"){
     for (i in 1:nrow(PeriphytonSummary)){
-      FinalBand<-ifelse(PeriphytonSummary[i,4] <=50,"A",ifelse(PeriphytonSummary[i,4]<=120,"B",ifelse(PeriphytonSummary[i,4]<=200,"C","D")))
+      FinalBand<-ifelse(PeriphytonSummary[i,4] <=50,"A",
+                        ifelse(PeriphytonSummary[i,4]<=120,"B",
+                               ifelse(PeriphytonSummary[i,4]<=200,"C","D")))
       PeriphytonSummary$AttributeBand[i]<-FinalBand
     }
 
   }
   else if(class=="Productive"|class=="productive"){
     for (i in 1:nrow(PeriphytonSummary)){
-      FinalBand<-ifelse(PeriphytonSummary[i,5] <=50,"A",ifelse(PeriphytonSummary[i,5]<=120,"B",ifelse(PeriphytonSummary[i,5]<=200,"C","D")))
+      FinalBand<-ifelse(PeriphytonSummary[i,5] <=50,"A",
+                        ifelse(PeriphytonSummary[i,5]<=120,"B",
+                               ifelse(PeriphytonSummary[i,5]<=200,"C","D")))
       PeriphytonSummary$AttributeBand[i]<-FinalBand
     }
 
@@ -754,7 +718,6 @@ NOFRiversPeriphyton<-function(data, time=Sys.Date(), start="", end="",class="Def
   return(data.frame(PeriphytonSummary))
 }
 
-
 ##################################################################################
 
 NOFRiversDRP <- function(data, time=Sys.Date(),start="", end=""){
@@ -763,10 +726,6 @@ NOFRiversDRP <- function(data, time=Sys.Date(),start="", end=""){
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversDRP")
   }
-
-  # if(!("DRP (g/m^3)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversDRP")
-  # }
 
   as.Date(time)
   #extract the current year
@@ -796,17 +755,23 @@ NOFRiversDRP <- function(data, time=Sys.Date(),start="", end=""){
 
   names(data) <- c("ID","Name","Time","Value")
   DRPSummary<- data %>% group_by(Name) %>% summarise("Minimum" = min(Value,na.rm = TRUE),
-                                                     "Maximum" = max(Value,na.rm = TRUE), "Median" = median(Value,na.rm = TRUE),
+                                                     "Maximum" = max(Value,na.rm = TRUE),
+                                                     "Median" = median(Value,na.rm = TRUE),
                                                      Percentile95 = quantile(Value,0.95, na.rm=TRUE),
                                                      n = length(Value[!is.na(Value)]))
 
   for(i in 1:nrow(DRPSummary)){
-    attribute95<-ifelse(DRPSummary[i,5]<=0.021,1, ifelse(DRPSummary[i,5]<=0.03, 2, ifelse(DRPSummary[i,5]<=0.054, 3, 4)))
-    attributeMed<-ifelse(DRPSummary[i,4]<=0.006,1, ifelse(DRPSummary[i,4]<=0.01,2, ifelse(DRPSummary[i,4]<=0.018,3,4)))
-    finalattribute<-ifelse(max(c(attributeMed,attribute95))==1,"A", ifelse(max(c(attributeMed,attribute95))==2,"B",ifelse(max(c(attributeMed,attribute95))==3,"C","D")))
+    attribute95<-ifelse(DRPSummary[i,5]<=0.021,1,
+                        ifelse(DRPSummary[i,5]<=0.03, 2,
+                               ifelse(DRPSummary[i,5]<=0.054, 3, 4)))
+    attributeMed<-ifelse(DRPSummary[i,4]<=0.006,1,
+                         ifelse(DRPSummary[i,4]<=0.01,2,
+                                ifelse(DRPSummary[i,4]<=0.018,3,4)))
+    finalattribute<-ifelse(max(c(attributeMed,attribute95))==1,"A",
+                           ifelse(max(c(attributeMed,attribute95))==2,"B",
+                                  ifelse(max(c(attributeMed,attribute95))==3,"C","D")))
     DRPSummary$AttributeBand[i]<-finalattribute
   }
-
   return(data.frame(DRPSummary))
 }
 
@@ -818,10 +783,6 @@ NOFRiversSFS <- function(data, time=Sys.Date(), start="", end="", class){
   if(ncol(data)!=4){
     stop("Incorrect data frame. For more information on this error, run: ?NOFRiversSFS")
   }
-
-  # if(!("Water Clarity (m)" %in% names(data))){
-  #   print("Incorrect parameter used. For more information on this error, run: ?NOFRiversSFS")
-  # }
 
   as.Date(time)
   #extract the current year
@@ -850,26 +811,35 @@ NOFRiversSFS <- function(data, time=Sys.Date(), start="", end="", class){
   names(data) <- c("ID","Name","Time","Value")
 
   SFSSummary<- data %>% group_by(Name) %>% summarise("SSCClass"=class,"Minimum" = min(Value,na.rm = TRUE),
-                                                     "Maximum" = max(Value,na.rm = TRUE), "Median" = median(Value,na.rm = TRUE),
+                                                     "Maximum" = max(Value,na.rm = TRUE),
+                                                     "Median" = median(Value,na.rm = TRUE),
                                                      n = length(Value[!is.na(Value)]))
 
   for(i in 1:nrow(SFSSummary)){
 
     if(class == 1){
-      attributeband<-ifelse(SFSSummary[i,5]>=1.78, "A", ifelse(SFSSummary[i,5]>=1.55, "B", ifelse(SFSSummary[i,5]>1.34, "C","D")))
+      attributeband<-ifelse(SFSSummary[i,5]>=1.78, "A",
+                            ifelse(SFSSummary[i,5]>=1.55, "B",
+                                   ifelse(SFSSummary[i,5]>1.34, "C","D")))
       SFSSummary$AttributeBand[i]<-attributeband
 
     }else if(class == 2){
-      attributeband<-ifelse(SFSSummary[i,5]>=0.93,"A", ifelse(SFSSummary[i,5]>=0.76, "B", ifelse(SFSSummary[i,5]>0.61,"C","D")))
+      attributeband<-ifelse(SFSSummary[i,5]>=0.93,"A",
+                            ifelse(SFSSummary[i,5]>=0.76, "B",
+                                   ifelse(SFSSummary[i,5]>0.61,"C","D")))
       SFSSummary$AttributeBand[i]<-attributeband
 
     }else if(class == 3){
 
-      attributeband<-ifelse(SFSSummary[i,5]>=2.95,"A",ifelse(SFSSummary[i,5]>=2.57,"B", ifelse(SFSSummary[i,5]>2.22,"C","D")))
+      attributeband<-ifelse(SFSSummary[i,5]>=2.95,"A",
+                            ifelse(SFSSummary[i,5]>=2.57,"B",
+                                   ifelse(SFSSummary[i,5]>2.22,"C","D")))
       SFSSummary$AttributeBand[i]<-attributeband
 
     }else if(class == 4){
-      attributeband<-ifelse(SFSSummary[i,5]>=1.38, "A", ifelse(SFSSummary[i,5]>=1.17, "B", ifelse(SFSSummary[i,5]>0.98, "C","D")))
+      attributeband<-ifelse(SFSSummary[i,5]>=1.38, "A",
+                            ifelse(SFSSummary[i,5]>=1.17, "B",
+                                   ifelse(SFSSummary[i,5]>0.98, "C","D")))
       SFSSummary$AttributeBand[i]<-attributeband
     }
     else{
@@ -882,101 +852,96 @@ NOFRiversSFS <- function(data, time=Sys.Date(), start="", end="", class){
 
 ##################################################################################
 
-NOFAll<- function(site, start="", end="", time=Sys.Date(),periclass="default", TNlaketype="Stratified", SFSClass=1){
-
-  if(class(site)!="character"){
-    stop("Incorrect site input. For more information on this error, run: ?NOFAll")
-  }
-
-  if(site %in% NERMN_River()){
-    peri<-if("Chloro Periphyton" %in% LocationWQParameters(site)){
-      perid<-AQMultiExtract(site,"Chloro Periphyton", start, end,time)
-      NOFRiversPeriphyton(perid, class=periclass)$AttributeBand
-    }
-
-    ammo<-if("Ammoniacal N" %in% LocationWQParameters(site)){
-      ammod<-AQMultiExtract(site, c("Ammoniacal N","pH"),start, end)
-      NOFLakesRiversNH3(ammod)$AttributeBand
-
-    }
-
-    nitra<-if("Nitrite Nitrate (as N)" %in% LocationWQParameters(site)){
-      nitrad<-AQMultiExtract(site, "Nitrite Nitrate (as N)",start, end, time)
-      NOFRiversNO3(nitrad)$AttributeBand
-    }
-
-    sedi<-if("Water Clarity" %in% LocationWQParameters(site)){
-      sedid<-AQMultiExtract(site,"Water Clarity", start, end, time)
-      NOFRiversSFS(sedid, class=SFSClass)$AttributeBand
-    }
-
-    ecoli<-if ("E coli" %in% LocationWQParameters(site)) {
-      ecolid<-AQMultiExtract(site,"E coli",start, end, time)
-      NOFLakesRiversECOLI(ecolid)$ProposedBand
-    }
-
-    dphos<-if("DRP" %in% LocationWQParameters(site)){
-      dphosd<-AQMultiExtract(site, "DRP",start,end, time)
-      NOFRiversDRP(dphosd)$AttributeBand
-    }
-
-    out<-list(peri,sedi,ammo,nitra,ecoli,dphos)
-    names(out)<-c("Periphyton NOF Band","Suspended Fine Sediment NOF Band", "Ammonia NOF Band", "Nitrate NOF Band","E Coli NOF Band","Dissolved  Reactive Phosphorus NOF ")
-    out<-out[!sapply(out,is.null)]
-
-
-  }
-
-  else if(site %in% lakelist()){
-    chloro<-if("Chloro a" %in% LocationWQParameters(site)){
-      chlorod<-AQMultiExtract(site, "Chloro a",start,end, time)
-      NOFLakesPhytoplankton(chlorod)$AttributeBand
-    }
-
-    nitro<-if ("N (Tot)" %in% LocationWQParameters(site)) {
-      nitrod<-AQMultiExtract(site,"N (Tot)", start, end, time)
-      NOFLakesTN(nitrod,  laketype=TNlaketype)$AttributeBand
-    }
-
-    phos<-if("P (Tot)" %in% LocationWQParameters(site)) {
-      phosd<-AQMultiExtract(site, "P (Tot)",start,end, time)
-      NOFLakesTP(phosd)$AttributeBand
-    }
-
-    ammo<-if("Ammoniacal N" %in% LocationWQParameters(site)){
-      ammod<-AQMultiExtract(site, c("Ammoniacal N","pH"),start, end)
-      NOFLakesRiversNH3(ammod)$AttributeBand
-
-    }
-
-    ecoli<-if ("E coli" %in% LocationWQParameters(site)) {
-      ecolid<-AQMultiExtract(site,"E coli",start, end, time)
-      NOFLakesRiversECOLI(ecolid)$ProposedBand
-    }
-
-    cyano<-if(c("Total Cyanobacteria","Potentially Toxic Cyanobacteria")  %in% LocationWQParameters(site)){
-      cyanod<-AQMultiExtract(site,c("Total Cyanobacteria", "Potentially Toxic Cyanobacteria"), start, end )
-      NOFLakesRiversCyanobacteria(cyanod)$ProposedBand
-    }
-
-    out<-list(chloro,nitro, phos,ammo,ecoli, cyano)
-    names(out)<-c("PhytoPlankton NOF Band","Total Nitrogen NOF Band","Total Phosphuros NOF Band", "Ammonia NOF Band","E Coli NOF Band",  "Cyanobacteria NOF Band")
-    out<-out[!sapply(out,is.null)]
-  }
-
-  else{
-    stop("Site not found. For more information on this error, run: ?NOFAll")
-  }
-
-
-  return(as.data.frame(out, row.names=c(site,"x"))[1,])
-
-}
-
-
-##################################################################################
-
-
+# NOFAll<- function(site, start="", end="", time=Sys.Date(),periclass="default", TNlaketype="Stratified", SFSClass=1){
+#
+#   if(class(site)!="character"){
+#     stop("Incorrect site input. For more information on this error, run: ?NOFAll")
+#   }
+#
+#   if(site %in% NERMN_River()){
+#     peri<-if("Chloro Periphyton" %in% LocationWQParameters(site)){
+#       perid<-AQMultiExtract(site,"Chloro Periphyton", start, end,time)
+#       NOFRiversPeriphyton(perid, class=periclass)$AttributeBand
+#     }
+#
+#     ammo<-if("Ammoniacal N" %in% LocationWQParameters(site)){
+#       ammod<-AQMultiExtract(site, c("Ammoniacal N","pH"),start, end)
+#       NOFLakesRiversNH3(ammod)$AttributeBand
+#
+#     }
+#
+#     nitra<-if("Nitrite Nitrate (as N)" %in% LocationWQParameters(site)){
+#       nitrad<-AQMultiExtract(site, "Nitrite Nitrate (as N)",start, end, time)
+#       NOFRiversNO3(nitrad)$AttributeBand
+#     }
+#
+#     sedi<-if("Water Clarity" %in% LocationWQParameters(site)){
+#       sedid<-AQMultiExtract(site,"Water Clarity", start, end, time)
+#       NOFRiversSFS(sedid, class=SFSClass)$AttributeBand
+#     }
+#
+#     ecoli<-if ("E coli" %in% LocationWQParameters(site)) {
+#       ecolid<-AQMultiExtract(site,"E coli",start, end, time)
+#       NOFLakesRiversECOLI(ecolid)$ProposedBand
+#     }
+#
+#     dphos<-if("DRP" %in% LocationWQParameters(site)){
+#       dphosd<-AQMultiExtract(site, "DRP",start,end, time)
+#       NOFRiversDRP(dphosd)$AttributeBand
+#     }
+#
+#     out<-list(peri,sedi,ammo,nitra,ecoli,dphos)
+#     names(out)<-c("Periphyton NOF Band","Suspended Fine Sediment NOF Band", "Ammonia NOF Band", "Nitrate NOF Band","E Coli NOF Band","Dissolved  Reactive Phosphorus NOF ")
+#     out<-out[!sapply(out,is.null)]
+#
+#
+#   }
+#
+#   else if(site %in% lakelist()){
+#     chloro<-if("Chloro a" %in% LocationWQParameters(site)){
+#       chlorod<-AQMultiExtract(site, "Chloro a",start,end, time)
+#       NOFLakesPhytoplankton(chlorod)$AttributeBand
+#     }
+#
+#     nitro<-if ("N (Tot)" %in% LocationWQParameters(site)) {
+#       nitrod<-AQMultiExtract(site,"N (Tot)", start, end, time)
+#       NOFLakesTN(nitrod,  laketype=TNlaketype)$AttributeBand
+#     }
+#
+#     phos<-if("P (Tot)" %in% LocationWQParameters(site)) {
+#       phosd<-AQMultiExtract(site, "P (Tot)",start,end, time)
+#       NOFLakesTP(phosd)$AttributeBand
+#     }
+#
+#     ammo<-if("Ammoniacal N" %in% LocationWQParameters(site)){
+#       ammod<-AQMultiExtract(site, c("Ammoniacal N","pH"),start, end)
+#       NOFLakesRiversNH3(ammod)$AttributeBand
+#
+#     }
+#
+#     ecoli<-if ("E coli" %in% LocationWQParameters(site)) {
+#       ecolid<-AQMultiExtract(site,"E coli",start, end, time)
+#       NOFLakesRiversECOLI(ecolid)$ProposedBand
+#     }
+#
+#     cyano<-if(c("Total Cyanobacteria","Potentially Toxic Cyanobacteria")  %in% LocationWQParameters(site)){
+#       cyanod<-AQMultiExtract(site,c("Total Cyanobacteria", "Potentially Toxic Cyanobacteria"), start, end )
+#       NOFLakesRiversCyanobacteria(cyanod)$ProposedBand
+#     }
+#
+#     out<-list(chloro,nitro, phos,ammo,ecoli, cyano)
+#     names(out)<-c("PhytoPlankton NOF Band","Total Nitrogen NOF Band","Total Phosphuros NOF Band", "Ammonia NOF Band","E Coli NOF Band",  "Cyanobacteria NOF Band")
+#     out<-out[!sapply(out,is.null)]
+#   }
+#
+#   else{
+#     stop("Site not found. For more information on this error, run: ?NOFAll")
+#   }
+#
+#
+#   return(as.data.frame(out, row.names=c(site,"x"))[1,])
+#
+# }
 
 ##################################################################################
 #                               BPU FUNCTIONS                                    #
@@ -1098,8 +1063,6 @@ BPU_Check <- function(SiteID){
   }
 }
 
-
-
 ##################################################################################
 #                         SWIMMABILITY FUNCTIONS                                 #
 ##################################################################################
@@ -1158,7 +1121,6 @@ MAC <- function(data, start="",end="",Type = "Freshwater"){
 
 ##################################################################################
 
-
 FW_Action_Levels <- function(data ,start="",end="", tme=Sys.Date()){
 
   #if start and end specified subset between them
@@ -1195,9 +1157,6 @@ FW_Action_Levels <- function(data ,start="",end="", tme=Sys.Date()){
   return(FWAL_Summary)
 
 }
-
-
-
 
 ##################################################################################
 #                              SITE FUNCTIONS                                    #
@@ -1274,10 +1233,10 @@ NERMN_River<- function(){
            "FL230406","DO047598","FD445529","OK300616","GN849464","GM781934","GN922883",
            "EK598179","JI148319","JK491452","IG265664","FC231176","JL350292","SO991920",
            "EP623312","JM102399","IK555889","IK564876","GJ662805","LI953392","LK149881",
-           "BQ708712","BQ708712","BR809582","BQ723939","BS961133","DO686858","DO712717",
+           "BQ708712","BR809582","BQ723939","BS961133","DO686858","DO712717",
            "NK608503","ML715056","CP466747","DP281304","CO938527","HN674689","EO451883",
            "BQ739463","KL998150","LK082095","IG691428","IL818464","KL919939","IL891937",
-           "FO761142","GO081642"))
+           "FO761142"))
 }
 
 ##################################################################################
@@ -1291,12 +1250,12 @@ Geothermal_Sites<-function(){
 NERMN_Lake<-function(){
   intergrated<-list(Intergrated=c("HL508168_INT","HL030557_INT","GL051366_INT",
                                   "FL479468_INT","FL274353_INT","EK783777_INT",
-                                  "GK015589_INT","FK427028_INT",
-                                  "FJ164707_INT",
-                                  "GI617624_INT","FI680541_INT","EL802148_INT","FJ986647_INT","GI097932_INT"))
+                                  "GK015589_INT","FK427028_INT", "FJ164707_INT",
+                                  "GI617624_INT","FI680541_INT","EL802148_INT",
+                                  "FJ986647_INT","GI097932_INT"))
   hypolimnion<-list(Hypolimnion=c("HL508168_HYP","GL051366_HYP",
-                                  "EK783777_HYP",
-                                  "GK015589_HYP","FK427028_HYP",
+                                  "EK783777_HYP","GK015589_HYP",
+                                  "FK427028_HYP",
                                   "FJ164707_HYP",
                                   "FI680541_HYP","EL802148_HYP","FJ986647_HYP","GI097932_HYP"))
   bottom<-list(Bottom=c("HL508168_BOT","HL030557_BOT","GL051366_BOT",
@@ -1327,7 +1286,6 @@ lakelist<-function(){
            "EK783777_DIS"))
 }
 
-
 ###################################################################################
 
 Bathing_River <- function(){
@@ -1336,7 +1294,6 @@ Bathing_River <- function(){
                                 "BR748451","JL348334","JK491452","IG265664","KM909138","KM083686","GN922883",
                                 "FO397216","CO809137","EO564565","BQ708712"))
   }
-
 
 ###################################################################################
 Bathing_Lake <- function(){
@@ -1364,7 +1321,6 @@ Cyanobacteria_Sites <- function(){
   ))
 
 }
-
 
 ##################################################################################
 #                               TIME SERIES                                      #
@@ -1415,8 +1371,6 @@ Continuous_TS <- function(data,parameters,gap){
 }
 
 ##################################################################################
-
-##################################################################################
 #                              BATHING SEASON                                    #
 ##################################################################################
 
@@ -1448,66 +1402,8 @@ Bathing_Season <- function (DateStamp){
 }
 
 ##################################################################################
-
-
-##################################################################################
-#                                SFRG TABLE                                      #
-##################################################################################
-
-SFRG_Table <- function (data, start = "", end = "",err_mtd="max",output){
-  require(dplyr)
-  names(data) <- c("ID", "Name", "Time", "Value")
-  if (nchar(start) > 1) {
-    start <- as.POSIXct(strptime(start, "%Y-%m-%d"),
-                        tz = "Etc/GMT+12")
-    end <- as.POSIXct(strptime(end, "%Y-%m-%d"), tz = "Etc/GMT+12")
-    data <- data[with(data, Time > start & Time < end),
-    ]
-  }
-  ECOLISummary <- data %>% group_by(Name, ID) %>% summarise(
-    n = length(Value[!is.na(Value)]),
-    Mean = mean(Value,na.rm = TRUE),
-    Median = median(Value,na.rm = TRUE),
-    Percentile95 = quantile(Value, 0.95, na.rm = TRUE),
-    PercentExceed540 = sum(Value >540, na.rm = TRUE)/length(Value[!is.na(Value)]) *100,
-    PercentExceed260 = sum(Value >260, na.rm = TRUE)/length(Value[!is.na(Value)]) *100,
-    PercentLess540 = sum(Value <=540, na.rm = TRUE)/length(Value[!is.na(Value)]) *100,
-    ProposedBand = ifelse(PercentExceed540 <5 & Median <= 130 & Percentile95 <= 540 & PercentExceed260 <20, "A",
-                          ifelse(PercentExceed540 <= 10 & Median <= 130 & Percentile95 <= 1000 & PercentExceed260 < 30,"B",
-                                 ifelse(PercentExceed540 <= 20 & Median <=130 & Percentile95 <= 1200 & PercentExceed260 < 34, "C",
-                                        ifelse(PercentExceed540 <= 30 & Median > 130 & Percentile95 > 1200 & PercentExceed260 > 34, "D",
-                                               ifelse(PercentExceed540 > 30 & Median > 260 & Percentile95 > 1200 & PercentExceed260 >50, "E",
-                                                      ECOLI_Banding(PercentExceed540,PercentExceed260,Median,Percentile95,err_mtd)))))),
-    `ProposedSwimmable?` = ifelse(ProposedBand =="A" || ProposedBand == "B" || ProposedBand =="C", "Swimmable","Not Swimmable"),
-    PercentLess280_Marine = sum(Value <=280, na.rm = TRUE)/length(Value[!is.na(Value)]) *100
-  )
-
-  ECOLISummary$Comment <- ifelse(ECOLISummary$n >= 50 & ECOLISummary$n < 60,"*",
-                                 ifelse(ECOLISummary$n <50 ,"**",""))
-  ECOLISummary$FinalBand <- paste(ECOLISummary$ProposedBand,ECOLISummary$Comment,sep="")
-
-
-  ECOLISummary$Mean <- sprintf("%.1f",round(ECOLISummary$Mean,1))
-  ECOLISummary$Median <- sprintf("%.1f",round(ECOLISummary$Median,1))
-  ECOLISummary$Percentile95 <- sprintf("%.1f",round(ECOLISummary$Percentile95,1))
-  ECOLISummary$PercentLess540 <- sprintf("%.1f",round(ECOLISummary$PercentLess540,1))
-  ECOLISummary$PercentLess280_Marine <- sprintf("%.1f",round(ECOLISummary$PercentLess280_Marine,1))
-
-  if(output == "KPI"){
-    return(ECOLISummary[,c(1:3,7:8,5:6,10:11)])
-  }else{
-    return(ECOLISummary[,c(1:6,9,12,14)])
-  }
-}
-
-###################################################################################
-
-
-
-##################################################################################
 #                             TIDAL FUNCTIONS                                    #
 ##################################################################################
-
 
 TidalFromDate <- function (date,SecondaryPort = "none")
 {
@@ -1618,7 +1514,6 @@ TidalFromDate <- function (date,SecondaryPort = "none")
   }
   return(tidalsummary)
 }
-
 
 ##################################################################################
 
